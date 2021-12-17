@@ -9,9 +9,10 @@ namespace ExamNP
     class Program
     {
         public static string[] urls;
+        public static Checker checker = new();
         static void Main(string[] args)
         {
-            Checker checker = new();
+            //   Checker checker = new();
             do
             {
                 Console.Clear();
@@ -22,15 +23,16 @@ namespace ExamNP
                     checker.WaitChecking = new string[] {
 
                 "http://be-x.narod.ru/tank.wml",
-                "http://serg.adonis.ua/WeatherLink/OutsideTempHistory.gif",
-                "https://domain.com/wp-admin/plugins.php",
                 "http://www.knecka.com",
                 "http://www.knecka.com/kneka",
+                "http://serg.adonis.ua/WeatherLink/OutsideTempHistory.gif",
+                "https://domain.com/wp-admin/plugins.php",
                 "http://wrong.com",
                 "http://example.com/ttt.php",
-                "http://google.com",
-
-                "https://google.com",
+                "http://google.corm",
+                "https://www.google.corm/",
+                "http://stats.vk-portal.net",//---------
+                "https://google.com/brr.php",
                 "https://www.microsoft.com",
                 "https://id.cisco.com",
                 "https://kherson.itstep.org",
@@ -59,25 +61,11 @@ namespace ExamNP
 
                     checker.CheckUrl();
 
+                    //+++++
+                    ShoweAll();
+                    //-----
 
-                    Console.WriteLine("Хотите сами выбрать StatusCode?\nДа нажмите 'Y'\nНет нажмите'N' ");
-                    if (Console.ReadKey(true).Key == ConsoleKey.Y)
-                    {
-                        Console.Clear();
-                        Showe(checker, Select((Enum.GetValues(typeof(HttpStatusCode))), 5, 5, "Select HttpStatusCode"));
-
-                    }
-                    else
-                    {
-                        Showe(checker, HttpStatusCode.OK);
-                        Showe(checker, HttpStatusCode.InternalServerError);
-                        Showe(checker, HttpStatusCode.NotFound);
-
-                        Showe(checker, HttpStatusCode.Forbidden);
-                        Showe(checker, HttpStatusCode.BadRequest);
-                        Showe(checker, HttpStatusCode.FailedDependency);
-                        Showe(checker, HttpStatusCode.Found);
-                    }
+                    WhatCodeSelect();
                 }
                 else
                 {
@@ -88,48 +76,66 @@ namespace ExamNP
                     checker.WaitChecking = urls.ToList();
 
                     checker.CheckUrl();
+                    //+++++
+                    ShoweAll();
+                    //-----
 
-
-                    Console.WriteLine("Хотите сами выбрать StatusCode?\nДа нажмите 'Y'\nНет нажмите'N' ");
-                    if (Console.ReadKey(true).Key == ConsoleKey.Y)
-                    {
-                        Console.Clear();
-                        Showe(checker, Select((Enum.GetValues(typeof(HttpStatusCode))), 5, 5, "Select HttpStatusCode"));
-
-                    }
-                    else
-                    {
-                        Showe(checker, HttpStatusCode.OK);
-                        Showe(checker, HttpStatusCode.InternalServerError);
-                        Showe(checker, HttpStatusCode.NotFound);
-
-                        Showe(checker, HttpStatusCode.Forbidden);
-                        Showe(checker, HttpStatusCode.BadRequest);
-                        Showe(checker, HttpStatusCode.FailedDependency);
-                        Showe(checker, HttpStatusCode.Found);
-
-                        Showe(checker, HttpStatusCode.Moved);
-                    }
+                    WhatCodeSelect();
                 }
                 Console.WriteLine("Хотите проверить еще? Да нажмите 'Y' Нет нажмите'N'");
 
             } while (Console.ReadKey(true).Key == ConsoleKey.Y);
 
         }
-        public static void Showe(Checker urlInfos, HttpStatusCode code)
-        {
-            Console.WriteLine($"\n SELECTED ALL {code}: ({(int)code})");
 
-            foreach (var item in urlInfos.StatusCode(code))
+        private static void WhatCodeSelect()
+        {
+            Console.WriteLine("Хотите сами выбрать StatusCode?\nДа нажмите 'Y'\nНет нажмите'N' ");
+            if (Console.ReadKey(true).Key == ConsoleKey.Y)
+            {
+                Console.Clear();
+                Showe(Select((Enum.GetValues(typeof(HttpStatusCode))), 5, 5, "Выберите HttpStatusCode. Для выбора нерабочих Esc"));
+
+            }
+            else
+            {
+                Showe(HttpStatusCode.OK);
+                Showe(HttpStatusCode.InternalServerError);
+                Showe(HttpStatusCode.NotFound);
+
+                Showe(HttpStatusCode.Forbidden);
+                Showe(HttpStatusCode.BadRequest);
+                Showe(HttpStatusCode.FailedDependency);
+                Showe(HttpStatusCode.Found);
+
+                Showe(HttpStatusCode.Moved);
+                Showe(0);//  not working link
+
+            }
+        }
+
+        public static void Showe( HttpStatusCode code)
+        {
+            var list = checker.GetListStatusCode(code);
+
+            Console.WriteLine($"\n {list.Count} {code}: ({(int)code})");
+
+            foreach (var item in list)
             {
                 Console.WriteLine($"{item.url} --> {item.httpStatusCode}");
             }
         }
 
+        public static void ShoweAll()
+        {
+            foreach (var item in checker.IsChecked)
+            {
+                Console.WriteLine($"{item.url} --> {item.httpStatusCode}");
+            }
+        }
 
         public static HttpStatusCode Select(Array masT, int x, int y, string text = "")
         {
-
             string str = "";
             try
             {
@@ -170,7 +176,7 @@ namespace ExamNP
                             return (HttpStatusCode)masT.GetValue(i);
 
                         case ConsoleKey.Escape:
-                            return HttpStatusCode.OK;
+                            return 0;
 
                         case ConsoleKey.Spacebar: i++; break;
                         case ConsoleKey.UpArrow: i++; break;
@@ -206,26 +212,30 @@ namespace ExamNP
             {
                 Console.WriteLine($"Введите url {i} сайта");
                 url = Console.ReadLine();
+
             } while (!Uri.IsWellFormedUriString(url, UriKind.Absolute));
             return url;
         }
 
         private static int CountMas()
         {
-            int attempts = 0;
+            int attempts = 4;
             do
             {
-                attempts++;
+                attempts--;
                 Console.WriteLine("Введите количество сайтов которые хотите проверить?");
 
-                if (int.TryParse(Console.ReadLine(), out int result)) return result;
+                if (int.TryParse(Console.ReadLine(), out int result))
+                {
+                    return result;
+                }
 
                 Console.Clear();
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Введите пожалусто целое число");
+                Console.WriteLine($"Введите пожалуйста целое число. Осталось попыток {attempts}");
                 Console.ResetColor();
 
-            } while (attempts < 4);
+            } while (attempts >0);
 
             Environment.Exit(0);
             return default;
