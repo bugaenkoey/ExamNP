@@ -29,7 +29,7 @@ namespace ExamNP
 
         public void CheckUrl()
         {
-
+            IsChecked.Clear();
             foreach (var item in WaitChecking)
             {
 
@@ -45,41 +45,40 @@ namespace ExamNP
 
                     //    Console.WriteLine($"StatusCode:{(int)response.StatusCode} --> ({response.StatusCode})");
 
-
                     urlInfo.httpStatusCode = response.StatusCode;
 
-                    response.Close();
+                 //   response.Close();
                 }
                 catch (WebException e)
                 {
-
-
                     //      Console.WriteLine($"This program is expected to throw WebException on successful run." +
                     //          $"\n\nException Message :{ e.Message}");
+                  //  Console.WriteLine($"{ e.Message}");
 
                     if (e.Status == WebExceptionStatus.ProtocolError)
                     {
 
-                        //      Console.WriteLine($"Status Code : {((HttpWebResponse)e.Response).StatusCode}");
+                         //     Console.WriteLine($"Status Code : {((HttpWebResponse)e.Response).StatusCode}");
                         //      Console.WriteLine($"Status Description : {((HttpWebResponse)e.Response).StatusDescription}");
 
                         urlInfo.httpStatusCode = ((HttpWebResponse)e.Response).StatusCode;
                     }
+                  //  urlInfo.httpStatusCode = HttpStatusCode.BadRequest;
                 }
                 catch (Exception e)
                 {
+                   //      Console.WriteLine(e.Message);
 
-                    //     Console.WriteLine(e.Message);
-
-                    urlInfo.httpStatusCode = HttpStatusCode.BadRequest;
+                 //   urlInfo.httpStatusCode = HttpStatusCode.BadRequest;
                 }
+
                 IsChecked.Add(urlInfo);
                 // WaitChecking.Remove(item);
             }
             WaitChecking.Clear();
         }
 
-        public List<UrlInfo> StatusCode(HttpStatusCode code)
+        public List<UrlInfo> GetListStatusCode(HttpStatusCode code)
         {
             List<UrlInfo> urlInfos = new();
             foreach (var item in IsChecked)
