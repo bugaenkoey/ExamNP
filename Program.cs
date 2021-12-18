@@ -62,7 +62,7 @@ namespace ExamNP
                     checker.CheckUrl();
 
                     //+++++
-                    ShoweAll();
+                    ShowAll();
                     //-----
 
                     WhatCodeSelect();
@@ -77,7 +77,7 @@ namespace ExamNP
 
                     checker.CheckUrl();
                     //+++++
-                    ShoweAll();
+                    ShowAll();
                     //-----
 
                     WhatCodeSelect();
@@ -94,27 +94,27 @@ namespace ExamNP
             if (Console.ReadKey(true).Key == ConsoleKey.Y)
             {
                 Console.Clear();
-                Showe(Select((Enum.GetValues(typeof(HttpStatusCode))), 5, 5, "Выберите HttpStatusCode. Для выбора нерабочих Esc"));
+                Show(Select((Enum.GetValues(typeof(HttpStatusCode))), 5, 5, "Выберите HttpStatusCode. Для выбора нерабочих Esc"));
 
             }
             else
             {
-                Showe(HttpStatusCode.OK);
-                Showe(HttpStatusCode.InternalServerError);
-                Showe(HttpStatusCode.NotFound);
+                Show(HttpStatusCode.OK);
+                Show(HttpStatusCode.InternalServerError);
+                Show(HttpStatusCode.NotFound);
 
-                Showe(HttpStatusCode.Forbidden);
-                Showe(HttpStatusCode.BadRequest);
-                Showe(HttpStatusCode.FailedDependency);
-                Showe(HttpStatusCode.Found);
+                Show(HttpStatusCode.Forbidden);
+                Show(HttpStatusCode.BadRequest);
+                Show(HttpStatusCode.FailedDependency);
+                Show(HttpStatusCode.Found);
 
-                Showe(HttpStatusCode.Moved);
-                Showe(0);//  not working link
+                Show(HttpStatusCode.Moved);
+                Show(0);//  not working link
 
             }
         }
 
-        public static void Showe( HttpStatusCode code)
+        public static void Show( HttpStatusCode code)
         {
             var list = checker.GetListStatusCode(code);
 
@@ -126,7 +126,7 @@ namespace ExamNP
             }
         }
 
-        public static void ShoweAll()
+        public static void ShowAll()
         {
             foreach (var item in checker.IsChecked)
             {

@@ -1,0 +1,4 @@
+По этой ссылке легче ориентироваться и наверное проверять.
+https://github1s.com/bugaenkoey/ExamNP/blob/HEAD/Program.cs
+
+https://github.com/bugaenkoey/ExamNP
